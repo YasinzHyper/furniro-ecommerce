@@ -1,0 +1,58 @@
+services:
+  # MongoDB service
+  mongodb:
+    image: mongo:7.0
+    container_name: furniro-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: furniro
+    volumes:
+      - mongodb_data:/data/db
+      - ./docker/mongodb-init:/docker-entrypoint-initdb.d
+    networks:
+      - furniro-network
+    # Reduce MongoDB logging
+    command: mongod --quiet --logpath /dev/null
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/furniro --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # Next.js application service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: furniro-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URL=mongodb://mongodb:27017/furniro
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET}
+      - WATCHPACK_POLLING=true
+    volumes:
+      # Mount source code for hot reloading in development
+      - .:/app
+      - /app/node_modules
+      # Use named volume for .next to avoid permission issues
+      - nextjs_cache:/app/.next
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - furniro-network
+
+volumes:
+  mongodb_data:
+  nextjs_cache:
+
+networks:
+  furniro-network:
+    driver: bridge

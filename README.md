@@ -20,10 +20,74 @@ https://www.figma.com/design/iq4p9mlY5JiAtLeiu05f0j/eCommerce-Website-%7C-Web-Pa
 
 
 # ⛏️ Installation
-To follow along the tutorial. Change to the starter branch  after cloning the repo.
-Then install the npm packages & run
+
+## 🐳 Docker Setup (Recommended)
+The easiest way to get started is using Docker, which handles MongoDB setup automatically:
+
+### Prerequisites
+- Docker and Docker Compose installed on your system
+
+### Quick Start
+1. Clone the repository:
 ```bash
-npm install && npm run dev
+git clone https://github.com/PiusLucky/furniro-ecommerce.git
+cd furniro-ecommerce
+```
+
+2. Copy the Docker environment file:
+```bash
+cp .env.docker .env
+```
+
+3. Update `.env` with your Stripe credentials:
+```bash
+STRIPE_SECRET_KEY=sk_test_your_actual_stripe_secret_key
+WEBHOOK_SECRET=your_webhook_secret
+```
+
+4. Start the application with Docker Compose:
+```bash
+docker-compose up --build
+```
+
+5. Open your browser and visit `http://localhost:3000`
+
+The application will automatically:
+- Set up MongoDB in a container
+- Install all dependencies
+- Start the Next.js development server
+- Enable hot reloading for development
+
+### Docker Commands
+- Start services: `docker-compose up`
+- Start in background: `docker-compose up -d`
+- Stop services: `docker-compose down`
+- View logs: `docker-compose logs`
+- Rebuild: `docker-compose up --build`
+
+## 📦 Manual Installation
+Alternatively, you can run the application manually:
+
+### Prerequisites
+- Node.js 18+ installed
+- MongoDB installed and running locally
+
+### Steps
+1. Change to the starter branch after cloning the repo
+2. Install npm packages:
+```bash
+npm install
+```
+
+3. Set up environment variables:
+```bash
+cp .env.example .env
+# Update .env with your MongoDB URL and Stripe credentials
+```
+
+4. Start MongoDB locally and run the application:
+```bash
+npm run dev
 ```
 
 

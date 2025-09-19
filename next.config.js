@@ -9,6 +9,13 @@ const nextConfig = {
     );
     return config;
   },
+  // Enable polling for file changes in Docker
+  ...(process.env.NODE_ENV === 'development' && {
+    experimental: {
+      // Enable hot reloading in Docker
+      esmExternals: 'loose',
+    },
+  }),
 };
 
 module.exports = nextConfig;
